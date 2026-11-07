@@ -1,0 +1,12 @@
+Battle illustration assets from the user-provided visual reference:
+https://ican101-cmd.github.io/KidGames/
+https://github.com/ican101-cmd/KidGames/tree/main/assets/art
+The reference documents these as original image_gen-created RPG illustrations:
+https://github.com/ican101-cmd/KidGames/blob/main/docs/art-direction.md
+Downloaded without image modification. Game effects, layout and sword overlay independently implemented for this Site.
+
+Armor overlay images from the same reference assets/art/armor directory; documented in docs/armor-art.md. SVG compositing, slot UI and weapon designs independently implemented for this Site.
+
+region-bosses.png: original six-guardian illustration generated for this project with OpenAI image generation, 2026-11-05. Transparent 1536×1024 atlas, 3×2 cells; CSS positions preserve the original asset.
+
+kingdom-map.png: original hand-painted fantasy overworld generated with OpenAI image generation for this project. Six regional landmarks match the interactive node coordinates.
