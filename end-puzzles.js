@@ -1,6 +1,6 @@
 'use strict';
 let endPuzzle=null,endTimers=[];
-const END_PUZZLES=[['生字記憶配對','森林精靈的雙生符文','翻開石牌，找出三對相同的生字。'],['聽音選字','溪谷精靈的密語','聽精靈念字，再選出對應的生字。'],['筆畫數排序','晶洞的石板階梯','由筆畫少到多，依序點選三個生字。'],['找出消失的字','古樹的失落封印','記住三個字，找回稍後消失的那一字。'],['符文順序記憶','潮汐的閃光密碼','看生字依序亮起，再依相同順序點選。'],['生字拼圖','星城的破碎石碑','先點一塊碎片，再點它應該放入的格子。']];
+const END_PUZZLES=[['生字記憶配對','森林精靈的雙生符文','翻開石牌，找出三對相同的生字。'],['聽音選字','溪谷精靈的密語','聽精靈念字，再選出對應的生字。'],['筆畫數排序','晶洞的石板階梯','由筆畫少到多，依序點選下方生字。'],['找出消失的字','古樹的失落封印','記住三個字，找回稍後消失的那一字。'],['符文順序記憶','潮汐的閃光密碼','看生字依序亮起，再依相同順序點選。'],['生字拼圖','星城的破碎石碑','先點一塊碎片，再點它應該放入的格子。']];
 function normalizeEndPuzzles(target,source=target){const old=source.endPuzzleVersion!==1,done={};for(let i=0;i<6;i++)if(target.progress[i]===lessonTotal(i)&&(old||source.endPuzzles?.[i]===true))done[i]=true;target.endPuzzles=done;target.endPuzzleVersion=1}
 function cleanupEndPuzzle(){endTimers.forEach(clearTimeout);endTimers=[];endPuzzle=null;if(window.speechSynthesis)window.speechSynthesis.cancel()}
 function endLater(fn,ms){const session=endPuzzle;const id=setTimeout(()=>{if(endPuzzle===session&&screen==='end-puzzle')fn()},ms);endTimers.push(id)}
@@ -13,7 +13,7 @@ function renderEndPuzzle(i){
  cleanup();active={mode:'story',region:i};screen='end-puzzle';setNav('map');
  const pool=shuffled(Q.required(D.lessons[i])),words=pool.slice(0,3);
  endPuzzle={region:i,words,pool,done:false,busy:false,chosen:[],target:0};
- APP.innerHTML=battleHeader('水晶試煉・'+END_PUZZLES[i][0],regions[i]+' · Boss 已擊敗')+`<section class="end-puzzle" style="--puzzle-color:${CRYSTAL_COLORS[i]}"><span class="tag">THE CRYSTAL TRIAL</span><h1>${END_PUZZLES[i][1]}</h1><p>${END_PUZZLES[i][2]}</p><div id="end-area"></div><div id="end-tools"></div><p id="end-message" role="status">答錯可以再試，不扣生命值。</p><p class="puzzle-note">題目來自本課生字 · 離開後可重新挑戰</p></section>`;
+ APP.innerHTML=battleHeader('水晶試煉・'+END_PUZZLES[i][0],regions[i]+' · Boss 已擊敗')+`<section class="end-puzzle" style="--puzzle-color:${CRYSTAL_COLORS[i]}"><span class="tag">解開這一題，就能取得水晶</span><h1>${END_PUZZLES[i][1]}</h1><p>${END_PUZZLES[i][2]}</p><div id="end-area"></div><div id="end-tools"></div><p id="end-message" role="status">答錯可以再試，不扣生命值。</p><p class="puzzle-note">離開後需重新解這一題，已完成的戰鬥會保留</p></section>`;
  $('#back').onclick=renderMap;$('#game-help').onclick=()=>modal('<h2>'+END_PUZZLES[i][0]+'</h2><p>'+END_PUZZLES[i][2]+'</p><p>解開謎題就能取得水晶。答錯不扣生命，可使用畫面上的提示或重播。</p><button class="primary" id="puzzle-help-close">知道了，繼續 →</button>',{'puzzle-help-close':closeModal});
  [pairPuzzle,audioPuzzle,sortPuzzle,missingPuzzle,sequencePuzzle,jigsawPuzzle][i]();save()
 }
@@ -29,9 +29,9 @@ function audioPuzzle(){const p=endPuzzle;const sounds=new Set();p.words=p.pool.f
  endMessage('先按「聽精靈念字」，再選字；聽不清楚可看注音。');document.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{if(+b.dataset.choice===p.target)finishEndPuzzle();else endMessage('再聽一次，也可以看看注音提示。')})
 }
 function sortPuzzle(){const p=endPuzzle;p.words=p.pool.filter((c,i,a)=>a.findIndex(x=>x.count===c.count)===i).slice(0,3);p.order=[];
- $('#end-area').innerHTML='<div class="sort-slots" id="sort-answer">◇ → ◇ → ◇</div><div class="rune-options">'+p.words.map(endButton).join('')+'</div>';
+ $('#end-area').innerHTML='<div class="sort-slots" id="sort-answer">'+p.words.map(()=> '◇').join(' → ')+'</div><div class="rune-options">'+p.words.map(endButton).join('')+'</div>';
  $('#end-tools').innerHTML='<button class="subtle" id="sort-reset">重新排列</button><button class="subtle" id="stroke-hint">查看筆畫數</button>';
- const reset=()=>{p.order=[];$('#sort-answer').textContent='◇ → ◇ → ◇';document.querySelectorAll('[data-choice]').forEach(b=>b.disabled=false)};$('#sort-reset').onclick=reset;
+ const reset=()=>{p.order=[];$('#sort-answer').textContent=p.words.map(()=> '◇').join(' → ');document.querySelectorAll('[data-choice]').forEach(b=>b.disabled=false)};$('#sort-reset').onclick=reset;
  $('#stroke-hint').onclick=()=>{document.querySelectorAll('[data-choice]').forEach((b,i)=>b.innerHTML=p.words[i].char+'<small>'+p.words[i].count+' 畫</small>')};
  document.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{b.disabled=true;p.order.push(+b.dataset.choice);$('#sort-answer').textContent=p.order.map(k=>p.words[k].char).join(' → ');if(p.order.length===p.words.length){if(p.order.every((k,n)=>n===0||p.words[p.order[n-1]].count<=p.words[k].count))finishEndPuzzle();else{endMessage('順序還不對，從筆畫最少的字開始。可查看筆畫數。');reset()}}})
 }
@@ -50,7 +50,7 @@ function sequencePuzzle(){const p=endPuzzle;p.sequence=shuffled([0,1,2]);p.input
 function jigsawPuzzle(){const p=endPuzzle;p.word=p.words[0];p.pieces=shuffled([0,1,2,3]);p.selected=null;p.placed=[];
  const tile=k=>`<svg viewBox="${k%2*128} ${Math.floor(k/2)*128} 128 128" aria-hidden="true"><text x="128" y="204" text-anchor="middle" font-size="224" fill="currentColor" font-family="Noto Sans TC, sans-serif">${p.word.char}</text></svg>`;
  $('#end-area').innerHTML=`<div class="jigsaw-layout"><div><span class="puzzle-label">完整石碑</span><div class="jigsaw-target">${[0,1,2,3].map(k=>`<button class="jigsaw-slot" data-slot="${k}" aria-label="${['左上','右上','左下','右下'][k]}格">＋</button>`).join('')}</div></div><div><span class="puzzle-label">選一塊碎片</span><div class="jigsaw-pieces">${p.pieces.map(k=>`<button class="jigsaw-piece" data-piece="${k}" draggable="true" aria-label="碎片 ${p.pieces.indexOf(k)+1}">${tile(k)}</button>`).join('')}</div></div></div>`;
- $('#end-tools').innerHTML=`<button class="subtle" id="jigsaw-hint">查看完整字形</button><div class="jigsaw-reference" id="whole-word" hidden>${p.word.char}</div>`;$('#jigsaw-hint').onclick=()=>{$('#whole-word').hidden=!$('#whole-word').hidden};
+ $('#end-tools').innerHTML=`<button class="subtle" id="jigsaw-hint">查看完整字形</button><div class="jigsaw-reference" id="whole-word" hidden>${p.word.char}</div>`;$('#jigsaw-hint').onclick=()=>{$('#whole-word').hidden=!$('#whole-word').hidden;$('#jigsaw-hint').textContent=$('#whole-word').hidden?'查看完整字形':'收起完整字形'};
  const select=k=>{p.selected=k;endMessage('碎片已選好，請點左上、右上、左下或右下的空格。');document.querySelectorAll('[data-piece]').forEach(b=>b.classList.toggle('selected',+b.dataset.piece===k))};
  document.querySelectorAll('[data-piece]').forEach(b=>{b.onclick=()=>select(+b.dataset.piece);b.ondragstart=e=>{select(+b.dataset.piece);e.dataTransfer?.setData('text/plain',b.dataset.piece)}});
  const place=b=>{if(p.selected===null){endMessage('先點選一塊碎片，再點它應該放入的格子。');return}const k=+b.dataset.slot;if(p.selected!==k){endMessage('這塊的位置不對，看看字形再試一次。');return}b.innerHTML=tile(k);b.disabled=true;p.placed.push(k);const piece=$('[data-piece="'+k+'"]');piece.disabled=true;piece.classList.remove('selected');piece.style.visibility='hidden';p.selected=null;if(p.placed.length===4)finishEndPuzzle();else endMessage('修復成功！'+p.placed.length+' / 4 塊')};
