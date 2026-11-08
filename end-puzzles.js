@@ -24,7 +24,7 @@ function pairPuzzle(){const p=endPuzzle;p.cards=shuffled([...p.words,...p.words]
 function audioPuzzle(){const p=endPuzzle;const sounds=new Set();p.words=p.pool.filter(c=>{if(sounds.has(c.zhuyin))return false;sounds.add(c.zhuyin);return true}).slice(0,3);p.target=Math.floor(Math.random()*p.words.length);
  $('#end-area').innerHTML='<div class="rune-options">'+p.words.map(endButton).join('')+'</div>';
  $('#end-tools').innerHTML='<button class="primary" id="listen-rune">♫ 聽精靈念字</button><button class="subtle" id="phonetic-hint">顯示注音提示</button><p id="phonetic-text" hidden></p>';
- $('#listen-rune').onclick=()=>{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){$('#phonetic-hint').onclick();endMessage('裝置無法播放語音，請依注音找字。');return}window.speechSynthesis.cancel();const u=new window.SpeechSynthesisUtterance(p.words[p.target].char);u.lang='zh-TW';u.rate=.65;u.onerror=()=>{if(endPuzzle===p){$('#phonetic-hint').onclick();endMessage('語音暫時無法播放，請依注音找字。')}};window.speechSynthesis.speak(u)};
+ $('#listen-rune').onclick=()=>speak(p.words[p.target].char,()=>{if(endPuzzle===p){$('#phonetic-hint').onclick();endMessage('語音未啟動，請再按一次朗讀，或依注音找字。')}});
  $('#phonetic-hint').onclick=()=>{$('#phonetic-text').hidden=false;$('#phonetic-text').textContent=p.words[p.target].zhuyin};
  endMessage('先按「聽精靈念字」，再選字；聽不清楚可看注音。');document.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{if(+b.dataset.choice===p.target)finishEndPuzzle();else endMessage('再聽一次，也可以看看注音提示。')})
 }
