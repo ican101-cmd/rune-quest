@@ -8,7 +8,7 @@ function wrong(){const c=document.querySelector('canvas'),e=(x,y)=>({pointerId:1
 function flushPuzzle(){const q=puzzleTicks.splice(0).sort((a,b)=>a.ms-b.ms);q.forEach(x=>x.f())}
 function solve(i){
  if(i===0){const cards=run('endPuzzle.cards.map(c=>c.char)');const seen=new Set();cards.forEach((c,k)=>{if(!seen.has(c)){seen.add(c);click('[data-card="'+k+'"]');click('[data-card="'+cards.indexOf(c,k+1)+'"]')}})}
- if(i===1){click('#listen-rune');assert(!document.querySelector('#phonetic-text').hidden);click('[data-choice="'+run('endPuzzle.target')+'"]')}
+ if(i===1){assert(!document.querySelector('#listen-rune'));assert.equal(document.querySelector('#shape-word').textContent,run('endPuzzle.words[endPuzzle.target].char'));click('[data-choice="'+run('endPuzzle.target')+'"]')}
  if(i===2){const order=run('endPuzzle.words.map((c,k)=>({k,n:c.count})).sort((a,b)=>a.n-b.n).map(c=>c.k)');order.forEach(k=>click('[data-choice="'+k+'"]'))}
  if(i===3){click('#memory-start');assert(!document.querySelector('[data-choice]'));flushPuzzle();click('[data-choice="'+run('endPuzzle.target')+'"]')}
  if(i===4){click('#sequence-start');flushPuzzle();run('endPuzzle.sequence').forEach(k=>click('[data-choice="'+k+'"]'))}
@@ -22,7 +22,7 @@ const pack=JSON.parse(fs.readFileSync(base+'curricula/n-6-up.json','utf8'));pack
  assert.equal(run('screen'),'end-puzzle');assert(!run('regionCleared('+i+')'));assert.equal(run('cleared()'),i);assert(!run('crystalsReady()'));assert.equal(run('endPuzzle.words.every(c=>Q.required(D.lessons['+i+']).some(w=>w.char===c.char))'),true);
  const coins=run('state.coins'),mistakes=run('JSON.stringify(state.storyMistakes)');
  if(i===0){const cards=run('endPuzzle.cards.map(c=>c.char)');click('[data-card="0"]');click('[data-card="'+cards.findIndex(c=>c!==cards[0])+'"]');assert(run('endPuzzle.busy'));flushPuzzle();assert(!run('endPuzzle.busy'))}
- if(i===1){click('[data-choice="'+((run('endPuzzle.target')+1)%3)+'"]');assert(!run('endPuzzle.done'));assert.equal(run('new Set(endPuzzle.words.map(c=>c.zhuyin)).size'),3)}
+ if(i===1){click('[data-choice="'+((run('endPuzzle.target')+1)%3)+'"]');assert(!run('endPuzzle.done'));assert.equal(run('new Set(endPuzzle.words.map(c=>c.char)).size'),3)}
  if(i===2){run('endPuzzle.words.map((c,k)=>({k,n:c.count})).sort((a,b)=>b.n-a.n).map(c=>c.k)').forEach(k=>click('[data-choice="'+k+'"]'));assert(!run('endPuzzle.done'));assert.equal(run('endPuzzle.order.length'),0)}
  if(i===5){click('[data-piece="0"]');click('[data-slot="1"]');assert.equal(run('endPuzzle.placed.length'),0)}
  solve(i);assert.equal(run('state.coins'),coins);assert.equal(run('JSON.stringify(state.storyMistakes)'),mistakes);assert(JSON.parse(saved.get('rune-quest-v1')).endPuzzles[i]);assert.equal(run('screen'),'victory');assert(document.querySelector('[data-new-crystal="'+i+'"] .newly-acquired'));click('#award-skip');assert(document.querySelector('.award-settled'));if(i===5){click('#victory-next');assert.equal(run('screen'),'summon')}
