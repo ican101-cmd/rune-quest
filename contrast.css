@@ -1,0 +1,17 @@
+/* Explicit dark-surface colors, separate from light-page utility styles. */
+.triumph,.summon-scene,.crystal-award,.end-puzzle,.crystal-collection{color:#fff3d8}
+.triumph-heading p,.triumph-results p,.triumph-status,.summon-copy p,.crystal-award>p,.end-puzzle>p,.crystal-collection p{color:#edf3ef}
+.triumph .tag,.summon-copy .tag,.crystal-award>.tag,.end-puzzle>.tag{color:#ffe3a5}
+.triumph-stats{background:#142b3c;border-color:#80949c}.triumph-stats span{color:#edf3ef;font-size:12px}
+.triumph .triumph-reward{background:#fff0bd;color:#50370c;border:1px solid #d5ad52;font-weight:800;font-size:15px;padding:9px 18px}
+.triumph-actions .subtle,.summon-actions .subtle,.award-actions .subtle,#end-tools .subtle{background:#243c50;color:#fff3d8;border-color:#9cb1be}
+.triumph-actions .primary,.summon-actions .primary,.award-actions .primary,.end-puzzle .primary{background:#f5d58c;color:#283e30}
+.crystal-collection .summon-replay{background:#243c50!important;color:#fff3d8!important;border-color:#9cb1be!important}
+.collection-heading small,.crystal-legend li,.crystal-legend small{color:#edf3ef;opacity:1}.crystal-legend li{font-size:11px}.crystal-legend small{font-size:10px}.crystal-legend li.owned{color:#ffe3a5}
+.end-puzzle .puzzle-note{color:#dce8e8;opacity:1;font-size:12px!important}.end-puzzle .puzzle-label{color:#edf3ef}.end-puzzle #end-message{color:#ffe3a5}.end-puzzle .card-back{background:#243c50;color:#ffe3a5}.end-puzzle .jigsaw-slot:not(:disabled){background:#243c50;color:#ffe3a5}
+.award-progress{background:#142b3c}.award-progress small,.award-progress>span{color:#edf3ef}
+.painted-map .node-title,.painted-map .map-label{background:#163e38;color:#fff3d8}.painted-map .map-top{background:#fff5dbed;border-radius:8px;padding:5px 8px;text-shadow:none}
+.arena-caption{background:#18332c;border-radius:8px;padding:4px 8px;color:#fff5d5;width:fit-content;max-width:calc(100% - 28px);margin:auto}
+.skill-announcement{background:#18332ce8;border-radius:8px;width:fit-content;max-width:92%;padding:5px 10px;margin:auto;text-shadow:0 1px #18332c}
+.triumph-status{font-size:12px}.summon-copy .tag,.end-puzzle>.tag,.crystal-award>.tag{font-size:11px}
+@media(max-width:740px){.crystal-collection .crystal-legend li{font-size:11px}.crystal-collection .crystal-legend small{font-size:10px}.crystal-collection p{font-size:12px}.triumph-heading p,.summon-copy p{font-size:12px}}
