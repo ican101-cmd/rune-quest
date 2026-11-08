@@ -202,7 +202,7 @@ function finishFinal(perfect=false){
 function startFinal(){
  if(!crystalsReady()){toast('先收齊六顆水晶，才能進入暮星文字魔龍關卡');return}
  if(state.finalQueue&&state.finalIndex>=state.finalQueue.length){finishFinal();return}
- if(!state.finalQueue){state.finalQueue=Q.finalReviewQueue(D.lessons,state.storyMistakes);state.finalIndex=0;state.combat=null;save()}
+ if(!state.finalQueue){delete state.retryLimits.final;state.finalQueue=Q.finalReviewQueue(D.lessons,state.storyMistakes);state.finalIndex=0;state.combat=null;save()}
  cleanup();active={mode:'final',region:5};advance();
 }
 function finalVictory(){
