@@ -32,5 +32,5 @@ assert.equal(run('count()'),108);assert(run('crystalsReady()'));click('#summon-s
 run('const oldSave={progress:[18,18,0,0,0,0]};normalizeEndPuzzles(oldSave);');assert.equal(run('Object.keys(oldSave.endPuzzles).length'),2);
 run('const newSave={progress:[18,18,0,0,0,0],endPuzzleVersion:1,endPuzzles:{0:true,2:true}};normalizeEndPuzzles(newSave);');assert.equal(run('Object.keys(newSave.endPuzzles).length'),1);
 // Timer callbacks from abandoned memory screens must not mutate a new screen.
-run('enterRegion(3)');click('#memory-start');click('#back');flushPuzzle();assert.equal(run('screen'),'map');run('enterRegion(3)');assert.equal(run('screen'),'end-puzzle');
+run('renderEndPuzzle(3)');click('#memory-start');click('#back');flushPuzzle();assert.equal(run('screen'),'map');run('enterRegion(3)');assert.equal(run('screen'),'battle');assert.equal(run('active.mode'),'replay');
 console.log('PASS: 108-word adventure, six distinct post-Boss puzzles, removed mid-lesson gate, errors/retries, audio fallback and unique sounds, crystal/dragon gating, replay, migration, pending save and timer cancellation.');
