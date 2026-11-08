@@ -38,3 +38,9 @@
 .rule-details{border-top:1px solid #d9dfce;padding:12px 0}.rule-details summary{cursor:pointer;font-weight:700;min-height:32px;color:#234a39}.rule-details p{line-height:1.8}.modal-actions button{min-height:44px}#modal{max-height:90dvh;overflow:auto}#modal .modal-actions{gap:10px}#modal .modal-actions .primary{flex-basis:100%}.item-shop p,.parent-instruction,.end-puzzle>p{color:#4b6451}.battle-potion{white-space:normal}
 
 @media(max-width:740px){body:has(.armory-layout)>header{height:auto;min-height:102px;padding:10px 12px 0;gap:8px 10px}body:has(.armory-layout) header nav{gap:0}body:has(.armory-layout) header .nav{font-size:12px;white-space:normal}}
+
+/* Keep supplies outside the illustrated arena so the hero stays visible. */
+.arena-hud .health-panel:after{display:none}
+.battle-supplies{display:flex;justify-content:flex-end;margin-top:6px}
+.battle-supplies .battle-potion{margin:0;min-height:44px;padding:6px 14px}
+@media(max-width:740px) and (orientation:portrait){.battle-layout .canvas-wrap{width:min(100%,clamp(200px,calc(100dvh - 440px),320px))}}
