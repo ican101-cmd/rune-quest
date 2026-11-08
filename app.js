@@ -80,20 +80,32 @@ function playAudio(draw){
 function sound(type='ok'){playAudio(ctx=>{const notes=type==='win'?[392,523,659]:type==='bad'?[220]:[523,659];notes.forEach((n,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*.09;o.type='sine';o.frequency.value=n;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.08,t+.01);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.onended=()=>{o.disconnect();g.disconnect()};o.start(t);o.stop(t+.32)})})}
 function speak(word,onFailure){
  const synth=window.speechSynthesis,Utterance=window.SpeechSynthesisUtterance;
- const fail=()=>{if(onFailure)onFailure();else toast('朗讀未啟動，請再點一次 ♫，並確認 iPad 音量與靜音設定。')};
+ const fail=()=>{if(onFailure)onFailure();else toast('朗讀未啟動：請確認 iPad 已下載「中文（台灣）」語音，或到「怎麼玩？」再測試朗讀。')};
  if(!synth||!Utterance){fail();return}
  clearTimeout(speechWatchdog);speechRequest=null;
- try{
-  requestPlaybackRoute();
-  if(synth.speaking||synth.pending)synth.cancel();if(synth.paused)synth.resume();
-  const u=new Utterance(word);speechRequest=u;u.lang='zh-TW';u.rate=.75;u.volume=1;
-  const voices=synth.getVoices?.()||[],voice=voices.find(v=>/^zh[-_]TW$/i.test(v.lang))||voices.find(v=>/^zh[-_](CN|SG)$/i.test(v.lang))||voices.find(v=>/^cmn/i.test(v.lang));if(voice){u.voice=voice;u.lang=voice.lang}
-  const failed=()=>{if(speechRequest!==u)return;clearTimeout(speechWatchdog);speechRequest=null;fail()};
+ const nav=window.navigator||{},apple=/iPad|iPhone|iPod/.test(nav.userAgent||'')||(/Mac/.test(nav.platform||'')&&nav.maxTouchPoints>1);
+ let voices=[];try{voices=synth.getVoices?.()||[]}catch(e){}
+ const tw=voices.filter(v=>/^zh[-_]TW$/i.test(v.lang)),local=tw.find(v=>v.localService)||tw[0];
+ const preferred=local||voices.find(v=>/^zh[-_](CN|SG)$/i.test(v.lang)&&v.localService)||voices.find(v=>/^cmn/i.test(v.lang));
+ // iOS can expose an unusable named voice; language-only selection lets the OS resolve it.
+ const choices=apple?[null,...(local?[local]:[])]:preferred?[preferred,null]:[null];
+ const begin=index=>{
+  const u=new Utterance(word);speechRequest=u;u.lang='zh-TW';u.rate=.85;u.volume=1;
+  if(choices[index]){u.voice=choices[index];u.lang=choices[index].lang}
+  const failed=()=>{
+   if(speechRequest!==u)return;clearTimeout(speechWatchdog);
+   if(index+1<choices.length){
+    // Invalidate before cancel: cancellation events must not cancel the replacement.
+    const pending={};speechRequest=pending;try{synth.cancel()}catch(e){}
+    speechWatchdog=setTimeout(()=>{if(speechRequest===pending)begin(index+1)},120);
+   }else{speechRequest=null;try{synth.cancel()}catch(e){}fail()}
+  };
   u.onstart=()=>{if(speechRequest===u)clearTimeout(speechWatchdog)};
   u.onend=()=>{if(speechRequest===u){clearTimeout(speechWatchdog);speechRequest=null}};
   u.onerror=e=>{if(e.error!=='canceled'&&e.error!=='interrupted')failed()};
-  speechWatchdog=setTimeout(failed,4000);synth.speak(u);
- }catch(e){clearTimeout(speechWatchdog);speechRequest=null;fail()}
+  try{if(synth.paused)synth.resume();speechWatchdog=setTimeout(failed,4000);synth.speak(u)}catch(e){failed()}
+ };
+ try{if(synth.speaking||synth.pending)synth.cancel();begin(0)}catch(e){clearTimeout(speechWatchdog);speechRequest=null;fail()}
 }
 // Unlock from real taps, including returning to the game after an interruption.
 for(const event of ['pointerup','touchend','click'])document.addEventListener(event,unlockAudio,{capture:true,passive:true});
@@ -284,6 +296,6 @@ function renderCloset(){
  if($('#cancel-preview'))$('#cancel-preview').onclick=()=>{equipmentPreview=null;renderCloset()};
  $('#armory-depart').onclick=()=>{equipmentPreview=null;renderMap()};save();
 }
-function showGameHelp(){const practice=active?.mode==='practice';modal(`<h2>${practice?'自由練習怎麼玩？':'寫字戰鬥怎麼玩？'}</h2><ol class="help-steps"><li>依筆順，在淡色字形上寫字。</li><li>${practice?'寫完後按「完成練習」回到生字圖鑑。':'寫完一字，勇者自動攻擊；等約 1.5 秒就會換字。'}</li><li>不確定下一筆？按「提示這一筆」；想看完整寫法，按「看筆順示範」。</li></ol><p>${practice?'自由練習不扣生命，也不推進冒險關卡。':'每錯一筆扣 20 HP；下一隻怪物登場時補滿生命。傷藥補 40 HP，復活丹可在倒下時原地接續。免費重試會從本關第一隻怪物開始，魔龍則整場重打。'}</p><p>離開時已完成的字會保存，目前未寫完的字需重新寫。</p><button class="subtle" id="audio-test">♫ 開啟並測試音效</button><button class="primary" id="help-close">知道了，繼續 →</button>`,{'audio-test':()=>{state.sound=true;save();sound('win');toast('已開啟音效；若仍無聲，請確認裝置音量、靜音與藍牙輸出。')},'help-close':closeModal})}
+function showGameHelp(){const practice=active?.mode==='practice';modal(`<h2>${practice?'自由練習怎麼玩？':'寫字戰鬥怎麼玩？'}</h2><ol class="help-steps"><li>依筆順，在淡色字形上寫字。</li><li>${practice?'寫完後按「完成練習」回到生字圖鑑。':'寫完一字，勇者自動攻擊；等約 1.5 秒就會換字。'}</li><li>不確定下一筆？按「提示這一筆」；想看完整寫法，按「看筆順示範」。</li></ol><p>${practice?'自由練習不扣生命，也不推進冒險關卡。':'每錯一筆扣 20 HP；下一隻怪物登場時補滿生命。傷藥補 40 HP，復活丹可在倒下時原地接續。免費重試會從本關第一隻怪物開始，魔龍則整場重打。'}</p><p>離開時已完成的字會保存，目前未寫完的字需重新寫。</p><button class="subtle" id="audio-test">♫ 開啟並測試音效</button><button class="subtle" id="speech-test">♫ 測試中文朗讀</button><button class="primary" id="help-close">知道了，繼續 →</button>`,{'speech-test':()=>speak('你好，歡迎來到文字王國'),'audio-test':()=>{state.sound=true;save();sound('win');toast('已開啟音效；若仍無聲，請確認裝置音量、靜音與藍牙輸出。')},'help-close':closeModal})}
 function showAbout(){modal(`<h2>遊戲怎麼玩？</h2><ol class="help-steps"><li>在地圖按「開始」或「繼續」，依筆順寫字打怪。</li><li>每關打完 5 隻怪物，再解謎取得水晶。</li><li>收齊 6 顆水晶，挑戰最後的魔龍。</li></ol><details class="rule-details"><summary>生命、道具與重試</summary><p>寫完一字攻擊 30 HP；寫錯一筆扣 20 HP。每隻新怪物登場時，勇者恢復 100 HP。</p><p>傷藥 20 金幣，補 40 HP。復活丹 50 金幣，倒下後補滿生命並接續戰鬥。免費重試會從本關第一隻怪物開始；魔龍戰則從第一字重打。</p></details><details class="rule-details"><summary>怎麼賺金幣？</summary><p>每課每字首次寫完 +5 金幣，再次練習 +2 金幣；首次擊敗魔龍額外 +30 金幣。倒下重打已完成的進度不重複給幣。到「練字賺金幣」可安心練習，不扣生命。</p></details><details class="rule-details"><summary>魔龍會考哪些字？</summary><p>前六關累計寫錯至少兩筆的生字優先複習；至少考 10 個不同字，不足時先補入只錯一筆的字，再隨機補足。每字對應 30 HP。</p></details><p>進度只存在這個瀏覽器。換裝置前請「匯出進度」，再到新裝置選相同六課並「匯入進度」。</p><details class="rule-details"><summary>資料與插畫來源</summary><div class="source-links">字庫來源：<a href="https://github.com/leyleyaiink/kids-chinese" target="_blank" rel="noopener">國語生字學習站</a> · 筆順資料：<a href="https://github.com/g0v/zh-stroke-data" target="_blank" rel="noopener">g0v / 教育部筆順資料</a><br>戰鬥插畫採用參考網站 <a href="https://ican101-cmd.github.io/KidGames/" target="_blank" rel="noopener">KidGames</a> 的手繪 RPG 素材。遊戲、特效與手寫判定為本次實作。語音使用裝置提供的中文朗讀。</div></details><div class="modal-actions"><button class="primary" id="about-close">知道了</button><button class="subtle" id="export">匯出進度</button><button class="subtle" id="import">匯入進度</button></div><input type="file" id="import-file" accept="application/json" hidden>`,{'about-close':closeModal,export:()=>{const b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='字之勇者-冒險進度.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);toast('進度已匯出')},import:()=>$('#import-file').click()});$('#import-file').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if((d.campaignId&&d.campaignId!==KEY)||(!d.campaignId&&KEY!=='rune-quest-v1')){toast('這份進度屬於其他選課，請先在家長模式選擇相同版本與六課');return}if(d.version!==1||!Array.isArray(d.progress)||d.progress.length!==6||d.progress.some((n,i)=>!Number.isInteger(n)||n<0||n>lessonTotal(i))||!Number.isInteger(d.coins)||d.coins<0||!d.records||typeof d.records!=='object')throw Error();const safe=defaults();safe.progress=d.progress;safe.coins=d.coins;for(const l of D.lessons)for(const c of l.chars){const k=(l.id-1)+':'+c.char,r=d.records[k];if(r&&typeof r==='object')safe.records[k]={attempts:Math.max(0,Number(r.attempts)||0),mistakes:Math.max(0,Number(r.mistakes)||0),mastered:r.mastered===true,lastMistakes:Math.max(0,Number(r.lastMistakes)||0)}}for(let i=0;i<6;i++){if(['chest','stone'].includes(d.routes?.[i]))safe.routes[i]=d.routes[i];if(d.puzzles?.[i]===true)safe.puzzles[i]=true}safe.owned=['ember',...(Array.isArray(d.owned)?d.owned.filter(x=>['forest','night'].includes(x)):[])];safe.equipped=safe.owned.includes(d.equipped)?d.equipped:'ember';normalizeEndPuzzles(safe,d);normalizeGear(safe,d);normalizeItems(safe,d);safe.summonSeen=d.summonSeen===true;safe.finalDone=d.finalDone===true;if(d.combat&&/^story:[0-5]:[0-4]$/.test(d.combat.key)&&Number.isFinite(d.combat.hp))safe.combat={key:d.combat.key,hp:Math.max(0,Math.min(MAX_HP,d.combat.hp))};normalizeReview(safe,d);state=safe;save();closeModal();renderMap();toast('進度已匯入')}catch(err){toast('這份檔案不是有效的冒險進度')}}}
 if($('#parent-mode'))$('#parent-mode').onclick=()=>{if(typeof renderParent==='function')renderParent()};document.querySelector('header').addEventListener('click',e=>{if(screen==='parent'&&!e.target.closest('#parent-mode')&&!e.target.closest('#sound')){e.preventDefault();e.stopPropagation()}},true);$('#nav-map').onclick=renderMap;$('.brand').onclick=e=>{e.preventDefault();renderMap()};$('#nav-book').onclick=renderBook;$('#nav-closet').onclick=renderCloset;$('#profile').onclick=renderCloset;$('#sound').onclick=()=>{state.sound=!state.sound;save();if(state.sound)sound();toast(state.sound?'音效已開啟':'音效已關閉')};$('#about').onclick=showAbout;$('#modal').addEventListener('close',()=>{if(screen==='puzzle'&&active&&state.puzzles[active.region])advance()});$('#modal').addEventListener('click',e=>{if(e.target===$('#modal')){const r=$('#modal').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeModal()}});if(window.QUEST_CATALOG)renderParent();else renderMap();
