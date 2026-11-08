@@ -56,3 +56,11 @@
 .battle-inventory{display:flex;align-items:center;justify-content:flex-end;gap:6px}.revive-stock{display:flex;align-items:center;min-height:44px;padding:6px 10px;border:1px solid #d3bf8e;border-radius:8px;background:#fff8e5;color:#574b2e;font-size:12px;white-space:nowrap}.battle-inventory .battle-potion{white-space:nowrap;padding:6px 10px}.battle-inventory .battle-potion:disabled{opacity:1;background:#eeeade;color:#6b705f;border-color:#d1d2c2}@media(max-width:480px){.battle-supplies{gap:5px;flex-wrap:wrap}.battle-inventory{gap:4px;margin-left:auto}.battle-inventory .battle-potion,.battle-inventory .revive-stock{font-size:11px;padding:6px}.battle-supplies>.money-badge{padding:6px;font-size:11px}}
 
 .coin-gain-popup{position:fixed;z-index:60;pointer-events:none;user-select:none;padding:7px 12px;border:1px solid #d4a647;border-radius:20px;background:#fff1c6;color:#69420b;box-shadow:0 3px 10px #503a1826;font-size:15px;font-weight:800;line-height:1.4;white-space:nowrap;animation:coin-gain-float 1.2s ease-out forwards}@keyframes coin-gain-float{0%{opacity:0;transform:translateY(6px) scale(.92)}15%,65%{opacity:1;transform:translateY(-5px) scale(1)}100%{opacity:0;transform:translateY(-15px)}}@media(prefers-reduced-motion:reduce){.coin-gain-popup{animation:none}}
+
+/* Zhuyin symbols and tone marks stay upright; tones use their own position. */
+.target-word .zhuyin-stack{position:relative;display:inline-flex;align-items:center;padding-right:.65em;font-size:15px;writing-mode:horizontal-tb;letter-spacing:0;line-height:1;flex-shrink:0}
+.target-word .zhuyin-stack span{writing-mode:horizontal-tb;letter-spacing:0;font-size:inherit;line-height:1.05}
+.target-word .zhuyin-letters{display:flex;flex-direction:column;align-items:center}
+.target-word .zhuyin-tone{position:absolute;right:0;top:50%;transform:translateY(-50%);font-family:Arial,'Noto Sans TC',sans-serif}
+.target-word .zhuyin-stack.neutral-tone{padding-top:.65em}
+.target-word .neutral-tone .zhuyin-tone{top:0;left:0;right:.65em;transform:none;text-align:center}
