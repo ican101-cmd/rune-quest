@@ -11,6 +11,6 @@ run('state.progress=[18,18,18,18,18,18];state.endPuzzles={0:true,1:true,2:true,3
 console.log('PASS: purchases, insufficient inventory/full health guards, potion healing, revive preserves enemy/progress, full-region retry, persistence, no duplicate retry rewards, final queue restart and crystals preserved');
 
 run('state.items.revive=0;state.coins=49;state.combat.hp=0;showDefeat()');assert(document.querySelector('#revive-combat').disabled);run('reviveCombat()');assert.equal(run('state.coins'),49);assert.equal(run('state.combat.hp'),0);
-run('state.coins=50;showDefeat()');assert(document.querySelector('#revive-combat').textContent.includes('購買並復活'));click('#revive-combat');assert.equal(run('state.coins'),0);assert.equal(run('state.combat.hp'),100);assert.equal(run('state.items.revive'),0);run('reviveCombat()');assert.equal(run('state.coins'),0);
+run('state.coins=50;showDefeat()');assert(document.querySelector('#revive-combat').textContent.includes('買復活丹，繼續打'));click('#revive-combat');assert.equal(run('state.coins'),0);assert.equal(run('state.combat.hp'),100);assert.equal(run('state.items.revive'),0);run('reviveCombat()');assert.equal(run('state.coins'),0);
 run('state.items.revive=1;state.coins=70;state.combat.hp=0;showDefeat()');click('#revive-combat');assert.equal(run('state.coins'),70);assert.equal(run('state.items.revive'),0);
 console.log('PASS: direct revival purchase, insufficient funds, duplicate click protection, owned item used before gold');
