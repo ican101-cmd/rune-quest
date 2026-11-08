@@ -44,3 +44,5 @@
 .battle-supplies{display:flex;justify-content:flex-end;margin-top:6px}
 .battle-supplies .battle-potion{margin:0;min-height:44px;padding:6px 14px}
 @media(max-width:740px) and (orientation:portrait){.battle-layout .canvas-wrap{width:min(100%,clamp(200px,calc(100dvh - 440px),320px))}}
+
+.writing-top .ghost-toggle{margin:0;min-height:44px;gap:5px;font-size:12px;white-space:nowrap;cursor:pointer}.writing-top .ghost-toggle input{margin:0;flex-shrink:0}.writing-top{gap:8px}@media(max-width:480px){.writing-top .ghost-toggle{font-size:10px;gap:3px}.writing-top .ghost-toggle input{width:18px;height:18px}.writing-top .target-word{gap:6px}.writing-top .stroke-progress{font-size:10px}}
