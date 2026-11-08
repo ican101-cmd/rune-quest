@@ -148,7 +148,7 @@ function heroAttack(){
  $('.enemy').classList.remove('floating','counterattack');
  $('.fighter').classList.remove('hurt');
  for(const [selector,cls]of [['.fighter','strike'],['.enemy','hit'],['#enemy-damage','pop']]){const e=$(selector);e.classList.remove(cls);void e.offsetWidth;e.classList.add(cls)}
- battleEffects($('.scene').dataset.skill,hp===0);if(hp===0){$('.enemy').classList.add('vanquished');$('.enemy-name').textContent='✓ 怪物已擊敗';}
+ battleEffects($('.scene').dataset.skill,hp===0);if(hp===0){$('.enemy').classList.add('vanquished');const heading=$('.enemy-heading');if(heading)heading.textContent='✓ 已擊敗';}
 }
 function completeWord(t){
  if(board.rewarded||board.defeated)return;board.rewarded=true;
