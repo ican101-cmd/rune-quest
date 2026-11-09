@@ -69,3 +69,6 @@
 .writing-card,.writing-card *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 
 .defeat-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:16px}.defeat-heading>div:first-child{min-width:0}.defeat-heading h2{font-size:clamp(19px,5vw,24px)}.defeat-choice .defeat-heading .defeat-wallet{margin:10px 0 0}.defeat-hero{position:relative;flex:0 0 116px;height:90px;overflow:hidden}.defeat-hero-ground{position:absolute;left:4px;right:3px;bottom:9px;height:15px;border-radius:50%;background:#51664b24}.defeat-hero-pose{position:absolute;width:60px;height:90px;left:28px;top:1px;transform:rotate(-82deg);filter:drop-shadow(2px 2px 2px #293f3426)}.defeat-hero .hero-idle{animation:none;transform:none}.defeat-hero-stars{position:absolute;left:8px;top:5px;color:#9c6c16;font-size:19px;letter-spacing:3px}@media(max-width:380px){.defeat-hero{flex-basis:94px}.defeat-hero-pose{left:17px}.defeat-heading h2{font-size:19px}}
+
+/* Keep handwriting gestures local, including starts on the canvas border. */
+.writing-card .canvas-wrap,.writing-card canvas{touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
