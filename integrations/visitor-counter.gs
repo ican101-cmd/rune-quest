@@ -1,6 +1,6 @@
 // Google Apps Script. Add the "Google Analytics Data API" advanced service.
-// Set the numeric GA4 property ID below, then run setupVisitorCounter once.
-const GA4_PROPERTY_ID = '';
+// GA4 property configured for Rune Quest; run setupVisitorCounter once.
+const GA4_PROPERTY_ID = '563803380';
 const VISITOR_SNAPSHOT_KEY = 'public-visitor-count-v1';
 
 function refreshVisitorCounter() {
