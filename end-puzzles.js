@@ -7,7 +7,7 @@ function endLater(fn,ms){const session=endPuzzle;const id=setTimeout(()=>{if(end
 function shuffled(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function endMessage(text){$('#end-message').textContent=text}
 function endButton(word,index){return `<button class="rune-choice" data-choice="${index}">${word.char}</button>`}
-function finishEndPuzzle(){const p=endPuzzle;if(!p||p.done)return;p.done=true;const alreadyOwned=regionCleared(p.region);state.endPuzzles[p.region]=true;save();regionVictory(p.region,alreadyOwned)}
+function finishEndPuzzle(){const p=endPuzzle;if(!p||p.done)return;p.done=true;const alreadyOwned=regionCleared(p.region);state.endPuzzles[p.region]=true;save();trackQuest('level_end',p.region+1,alreadyOwned?'replay':'story');regionVictory(p.region,alreadyOwned)}
 function renderEndPuzzle(i){
  if(state.progress[i]!==lessonTotal(i)||(i>0&&!regionCleared(i-1))){renderMap();return}
  cleanup();active={mode:'story',region:i};screen='end-puzzle';setNav('map');
