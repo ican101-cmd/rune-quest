@@ -72,3 +72,5 @@
 
 /* Keep handwriting gestures local, including starts on the canvas border. */
 .writing-card .canvas-wrap,.writing-card canvas{touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+
+header .visitor-counter{display:block;margin-top:5px;font-size:11px;font-weight:500;letter-spacing:0;line-height:1.5;color:#315744}header .visitor-counter[hidden]{display:none}header .visitor-counter b{font-weight:800}header .visitor-counter small{display:block;font-size:9px;letter-spacing:0;color:#596958;margin:0}@media(max-width:740px){header .visitor-counter{font-size:10px}header .visitor-counter small{font-size:9px}}

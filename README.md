@@ -47,3 +47,6 @@
 Google Signals 與廣告個人化訊號關閉；廣告儲存、廣告使用者資料、廣告個人化 consent 設為 denied。分析 Cookie 最長設定為 30 天，限遊戲路徑；送出的頁面位置固定為公開遊戲網址，不含查詢參數或片段，來源網址留空。GA4 仍會處理瀏覽器／裝置資訊及其一般分析識別資料，人數為估計值，非實際兒童名單。
 
 在 GA4「報表 → 即時」可檢查事件。欲在一般報表中依冒險或關卡分類，至「管理 → 自訂定義」建立事件範圍維度：`adventure_type`、`level_id`、`play_mode`；一般報表可能需 24–48 小時更新。這些 GA 後台設定需由帳戶擁有人操作。
+
+## 公開到訪人數
+頁首人數讀取 Google Apps Script 的每小時 GA4 總使用者快取。程式與部署步驟見 [VISITOR-COUNTER-SETUP.md](integrations/VISITOR-COUNTER-SETUP.md)。需先由資源擁有人授權／部署，再填入 `visitor-counter-config.js` 的公開服務網址；未設定時隱藏，不顯示虛構數字。前端與公開回應均不含 GA 存取密鑰。
